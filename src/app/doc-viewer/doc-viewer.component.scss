@@ -1,0 +1,103 @@
+:host {
+  display: block;
+  height: 100%;
+  --zoom: 1;
+}
+
+.viewport {
+  position: relative;
+  height: 100vh;
+  overflow: auto;
+  background: gray;
+  padding: calc(32px * var(--zoom));
+  box-sizing: border-box;
+  transition: padding 150ms ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page {
+  position: relative;
+  width: calc(800px * var(--zoom));
+  min-height: calc(1000px * var(--zoom));
+  margin: 0 auto;
+  transition:
+    width 150ms ease-out,
+    min-height 150ms ease-out;
+}
+
+.paper {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: calc(48px * var(--zoom));
+  box-sizing: border-box;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  font-size: calc(16px * var(--zoom));
+  line-height: 1.6;
+  transition:
+    padding 150ms ease-out,
+    font-size 150ms ease-out;
+}
+
+.annotation {
+  position: absolute;
+  z-index: 10;
+  background-color: yellow;
+  opacity: 0.7;
+  color: black;
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 300px;
+  overflow-wrap: break-word;
+  width: max-content;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.annotation-editor {
+  position: absolute;
+  width: 200px;
+  min-width: 250px;
+  z-index: 10;
+}
+
+.annotation-close {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background-color: black;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+}
+
+.files-editor {
+  background-color: #1e1e1e;
+}
+
+::ng-deep [tuiTheme='dark'] [tuiAppearance][data-appearance='textfield'][data-focus='true'] {
+  background-color: #1e1e1e !important;
+}
+
+.image {
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.confirm-button {
+  background-color: #1e1e1e;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}

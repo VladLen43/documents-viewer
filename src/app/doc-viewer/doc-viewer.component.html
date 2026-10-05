@@ -1,0 +1,98 @@
+<div class="viewport" #viewport>
+  @for (item of pages(); track item.id) {
+    <div class="page">
+      <img [src]="item.imageUrl" class="paper" (click)="openAnnotationWindow($event, item.id)" />
+
+      @for (annotation of annotations(); track annotation.id) {
+        @if (annotation.pageId === item.id) {
+          <div
+            class="annotation"
+            [style.left.px]="annotation.x * zoom()"
+            [style.top.px]="annotation.y * zoom()"
+            (pointerdown)="startDrag($event, $index, annotation)"
+            (pointermove)="onDrag($event)"
+            (pointerup)="endDrag($event)"
+            (pointercancel)="endDrag($event)"
+          >
+            @if (annotation.imageUrl) {
+              <img [src]="annotation.imageUrl" class="image" draggable="false" />
+            } @else {
+              {{ annotation.text }}
+            }
+
+            <tui-icon
+              class="annotation-close"
+              icon="@tui.x"
+              (pointerdown)="$event.stopPropagation()"
+              (click)="deleteAnnotation(annotation.id); $event.stopPropagation()"
+            />
+          </div>
+        }
+      }
+
+      @if (annotationPosition()) {
+        @if (!typeControl.value) {
+          <tui-textfield
+            class="annotation-editor type-select"
+            [style.left.px]="annotationPosition()!.x * zoom()"
+            [style.top.px]="annotationPosition()!.y * zoom()"
+            tuiChevron
+            tuiTextfieldSize="m"
+            [tuiTextfieldCleaner]="false"
+            [stringify]="stringify"
+          >
+            <input [formControl]="typeControl" placeholder="Выберите тип аннотации" tuiSelect />
+
+            <tui-data-list-wrapper *tuiDropdown [items]="annotationTypes" />
+          </tui-textfield>
+        }
+
+        @if (typeControl.value?.type === 'text') {
+          <tui-textfield
+            class="annotation-editor"
+            [style.left.px]="annotationPosition()!.x * zoom()"
+            [style.top.px]="annotationPosition()!.y * zoom()"
+          >
+            <input
+              [formControl]="textControl"
+              placeholder="Введите аннотацию"
+              class="annotation-input"
+              tuiInput
+              (keydown.enter)="confirmAnnotation()"
+            />
+            <tui-icon (click)="confirmAnnotation(); $event.stopPropagation()" icon="@tui.check" />
+          </tui-textfield>
+        }
+
+        @if (typeControl.value?.type === 'image') {
+          @if (!fileControl.value) {
+            <label
+              class="annotation-editor"
+              style="background-color: black"
+              [style.left.px]="annotationPosition()!.x * zoom()"
+              [style.top.px]="annotationPosition()!.y * zoom()"
+              tuiInputFiles
+            >
+              <input accept="image/*" tuiInputFiles [formControl]="fileControl" />
+            </label>
+          } @else {
+            <tui-files
+              class="annotation-editor files-editor"
+              [style.left.px]="annotationPosition()!.x * zoom()"
+              [style.top.px]="annotationPosition()!.y * zoom()"
+            >
+              <tui-file
+                [file]="fileControl.value!"
+                [showDelete]="'always'"
+                (remove)="removeFile()"
+              ></tui-file>
+              <img [src]="file()" />
+
+              <button class="confirm-button" (click)="confirmAnnotation()">Добавить</button>
+            </tui-files>
+          }
+        }
+      }
+    </div>
+  }
+</div>
